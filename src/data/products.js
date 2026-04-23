@@ -16,8 +16,6 @@ export const PRODUCTS = [
   { id: 'sofi_salmon_3ml',     name: 'סופי סלמון 3CC',             bonus: 40  },
   { id: 'sculptra',            name: 'סקולפטרה',                    bonus: 50  },
   { id: 'skin_booster_5ml',    name: 'סקין בוסטר',             bonus: 60  },
-  { id: 'shavav_cc100',        name: 'ישבן 100CC',                  bonus: 100 },
-  { id: 'zahav_cc100',         name: 'חזה 100CC',                  bonus: 100 },
   { id: 'package_vip',         name: 'חבילת VIP',                   bonus: 270 },
   { id: 'package_premium',     name: 'חבילת PREMIUM',               bonus: 170 },
   { id: 'package_superderm_3', name: 'חבילת 3 סופרידרם',            bonus: 24  },
