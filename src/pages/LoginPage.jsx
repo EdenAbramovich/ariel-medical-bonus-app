@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { useState, useEffect } from 'react'
+import { signInWithRedirect, getRedirectResult, GoogleAuthProvider } from 'firebase/auth'
 import { auth } from '../firebase'
 import './LoginPage.css'
 
@@ -9,18 +9,23 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState(null)
 
-  const handleLogin = async () => {
+  useEffect(() => {
+    setLoading(true)
+    getRedirectResult(auth)
+      .then(result => {
+        if (!result) setLoading(false)
+        // if result exists, onAuthStateChanged in App.jsx handles navigation
+      })
+      .catch(err => {
+        setError('ההתחברות נכשלה. נסי שוב.')
+        setLoading(false)
+      })
+  }, [])
+
+  const handleLogin = () => {
     setLoading(true)
     setError(null)
-    try {
-      await signInWithPopup(auth, provider)
-      // App.jsx onAuthStateChanged handles the rest
-    } catch (err) {
-      if (err.code !== 'auth/popup-closed-by-user') {
-        setError('ההתחברות נכשלה. נסי שוב.')
-      }
-      setLoading(false)
-    }
+    signInWithRedirect(auth, provider)
   }
 
   return (
