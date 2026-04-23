@@ -149,9 +149,34 @@
   transform: translateY(-1px);
 }
 
-.google-btn:active { transform: translateY(0); }
+.google-btn:active  { transform: translateY(0); }
+.google-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 
 .google-icon { width: 22px; height: 22px; flex-shrink: 0; }
+
+.btn-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f8bbd9;
+  border-top-color: #e91e63;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.login-error {
+  color: #c62828;
+  background: #ffebee;
+  border: 1px solid #ef9a9a;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  text-align: center;
+  margin: 0;
+  width: 100%;
+}
 
 /* Footer */
 .login-footer {

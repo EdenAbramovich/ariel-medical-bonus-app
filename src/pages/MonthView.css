@@ -185,6 +185,28 @@
 .summary-val.highlight { color: #2e7d32; }
 .summary-divider { width: 1px; height: 36px; background: #fce4ec; }
 
+/* Loading state */
+.cal-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 0;
+  color: #c2185b;
+  font-size: 14px;
+}
+
+.cal-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #fce4ec;
+  border-top-color: #e91e63;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .month-view-content { padding: 20px 14px 80px; }

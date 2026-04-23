@@ -132,6 +132,29 @@
 .month-days  { font-size: 11px; color: #a5d6a7; font-weight: 500; }
 .month-empty { font-size: 12px; color: #ccc; font-weight: 400; }
 
+/* Loading state */
+.dash-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 60px 0;
+  color: #c2185b;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dash-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #fce4ec;
+  border-top-color: #e91e63;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .dash-content { padding: 24px 20px 80px; }

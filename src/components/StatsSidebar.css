@@ -223,6 +223,24 @@
   text-align: left;
 }
 
+/* Loading */
+.sidebar-loading {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 8px;
+}
+
+.sidebar-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #fce4ec;
+  border-top-color: #e91e63;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* Empty */
 .sidebar-empty {
   padding: 32px 20px;

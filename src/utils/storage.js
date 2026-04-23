@@ -1,49 +1,76 @@
-const PREFIX = 'ariel_data_'
+import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore'
+import { db } from '../firebase'
+import { calcMonthBonus } from './bonusCalc'
 
 function monthKey(year, month) {
   return `${year}-${String(month).padStart(2, '0')}`
 }
 
-export function getUserData(userId) {
-  try {
-    const raw = localStorage.getItem(PREFIX + userId)
-    return raw ? JSON.parse(raw) : {}
-  } catch {
-    return {}
-  }
+function monthRef(userId, year, month) {
+  return doc(db, 'users', userId, 'months', monthKey(year, month))
 }
 
-function saveUserData(userId, data) {
-  localStorage.setItem(PREFIX + userId, JSON.stringify(data))
+// Returns { "16": { products: {...} }, ... } for the given month
+export async function getMonthData(userId, year, month) {
+  const snap = await getDoc(monthRef(userId, year, month))
+  return snap.exists() ? (snap.data().days || {}) : {}
 }
 
-export function getMonthData(userId, year, month) {
-  const data = getUserData(userId)
-  return data[monthKey(year, month)] || {}
+// Returns the saved products for a specific day
+export async function getDayData(userId, year, month, day) {
+  const monthData = await getMonthData(userId, year, month)
+  return monthData[String(day)]?.products || {}
 }
 
-export function getDayData(userId, year, month, day) {
-  const monthData = getMonthData(userId, year, month)
-  return monthData[day]?.products || {}
-}
+// Saves a day's products and recalculates the month total
+export async function saveDayData(userId, year, month, day, products) {
+  const ref = monthRef(userId, year, month)
+  const snap = await getDoc(ref)
+  const days = snap.exists() ? { ...(snap.data().days || {}) } : {}
 
-// Save a day's product quantities (only stores non-zero values)
-export function saveDayData(userId, year, month, day, products) {
-  const data = getUserData(userId)
-  const key = monthKey(year, month)
-  if (!data[key]) data[key] = {}
-
-  const nonZero = {}
-  Object.entries(products).forEach(([id, qty]) => {
-    if (qty > 0) nonZero[id] = qty
-  })
+  const nonZero = Object.fromEntries(
+    Object.entries(products).filter(([, qty]) => qty > 0)
+  )
 
   if (Object.keys(nonZero).length === 0) {
-    delete data[key][day]
+    delete days[String(day)]
   } else {
-    data[key][day] = { products: nonZero }
+    days[String(day)] = { products: nonZero }
   }
 
-  if (Object.keys(data[key]).length === 0) delete data[key]
-  saveUserData(userId, data)
+  await setDoc(ref, {
+    days,
+    total: calcMonthBonus(days),
+    updatedAt: new Date(),
+  })
+}
+
+// Returns all months that have data: { "2026-04": { total, daysCount }, ... }
+export async function getAllMonthSummaries(userId) {
+  const snap = await getDocs(collection(db, 'users', userId, 'months'))
+  const result = {}
+  snap.forEach(d => {
+    result[d.id] = {
+      total:     d.data().total || 0,
+      daysCount: Object.keys(d.data().days || {}).length,
+    }
+  })
+  return result
+}
+
+// Returns 12-item array of { month, bonus, days } for a given year
+export async function getYearData(userId, year) {
+  const snap = await getDocs(collection(db, 'users', userId, 'months'))
+  const result = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, bonus: 0, days: 0 }))
+  snap.forEach(d => {
+    const [y, m] = d.id.split('-').map(Number)
+    if (y === year) {
+      result[m - 1] = {
+        month:  m,
+        bonus:  d.data().total || 0,
+        days:   Object.keys(d.data().days || {}).length,
+      }
+    }
+  })
+  return result
 }

@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react'
-import { getMonthData } from '../utils/storage'
-import { calcMonthBonus, formatCurrency } from '../utils/bonusCalc'
+import { useState, useEffect } from 'react'
+import { getYearData } from '../utils/storage'
+import { formatCurrency } from '../utils/bonusCalc'
 import { HEBREW_MONTHS } from '../utils/dateHelpers'
 import './StatsSidebar.css'
 
@@ -88,28 +88,28 @@ function MonthlyChart({ yearData, selectedYear }) {
   )
 }
 
+const EMPTY_YEAR = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, bonus: 0, days: 0 }))
+
 export default function StatsSidebar({ userId, onClose }) {
   const today = new Date()
   const [selectedYear, setSelectedYear] = useState(today.getFullYear())
+  const [yearData, setYearData]         = useState(EMPTY_YEAR)
+  const [loading, setLoading]           = useState(true)
 
   const minYear = today.getFullYear() - 3
   const maxYear = today.getFullYear()
 
-  const yearData = useMemo(() => {
-    return Array.from({ length: 12 }, (_, i) => {
-      const md = getMonthData(userId, selectedYear, i + 1)
-      return {
-        month: i + 1,
-        bonus: calcMonthBonus(md),
-        days: Object.keys(md).length,
-      }
-    })
+  useEffect(() => {
+    setLoading(true)
+    getYearData(userId, selectedYear)
+      .then(data => { setYearData(data); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [userId, selectedYear])
 
-  const totalBonus = yearData.reduce((s, m) => s + m.bonus, 0)
+  const totalBonus   = yearData.reduce((s, m) => s + m.bonus, 0)
   const activeMonths = yearData.filter(m => m.bonus > 0).length
-  const bestMonth = yearData.reduce((best, m) => (m.bonus > best.bonus ? m : best), yearData[0])
-  const avgBonus = activeMonths > 0 ? Math.round(totalBonus / activeMonths) : 0
+  const bestMonth    = yearData.reduce((best, m) => (m.bonus > best.bonus ? m : best), yearData[0])
+  const avgBonus     = activeMonths > 0 ? Math.round(totalBonus / activeMonths) : 0
 
   return (
     <div className="sidebar-overlay" onClick={onClose}>
@@ -138,6 +138,8 @@ export default function StatsSidebar({ userId, onClose }) {
             disabled={selectedYear >= maxYear}
           >›</button>
         </div>
+
+        {loading && <div className="sidebar-loading"><div className="sidebar-spinner" /></div>}
 
         {/* Stat cards */}
         <div className="stat-cards">
