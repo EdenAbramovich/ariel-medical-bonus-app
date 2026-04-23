@@ -1,0 +1,118 @@
+.app-header {
+  background: linear-gradient(135deg, #ad1457, #e91e63);
+  padding: 0 28px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 12px rgba(173, 20, 87, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.header-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.header-logo span {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.header-title {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.header-back {
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #fff;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.header-back:hover { background: rgba(255,255,255,0.3); }
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.header-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.5);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.header-username {
+  color: rgba(255,255,255,0.9);
+  font-size: 14px;
+  font-weight: 500;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-logout {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.45);
+  color: #fff;
+  padding: 5px 14px;
+  border-radius: 8px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.header-logout:hover { background: rgba(255,255,255,0.28); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .app-header { padding: 0 16px; height: 54px; }
+  .header-title { font-size: 16px; }
+  .header-username { display: none; }
+  .header-back { font-size: 12px; padding: 4px 10px; }
+}
+
+@media (max-width: 480px) {
+  .app-header { padding: 0 12px; height: 50px; }
+  .header-title { font-size: 14px; }
+  .header-logo { width: 30px; height: 30px; }
+  .header-logo span { font-size: 11px; }
+  .header-back { padding: 4px 8px; font-size: 11px; }
+  .header-logout { padding: 4px 10px; font-size: 12px; }
+  .header-avatar { width: 28px; height: 28px; }
+}

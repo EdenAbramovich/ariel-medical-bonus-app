@@ -1,0 +1,33 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Heebo', sans-serif;
+  background: #fce4ec;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* prevent horizontal scroll on mobile */
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Better tap targets on mobile */
+button {
+  touch-action: manipulation;
+}
+
+/* Prevent zoom on input focus on iOS */
+input[type="number"] {
+  font-size: 16px;
+}
