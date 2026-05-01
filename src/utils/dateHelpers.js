@@ -17,7 +17,7 @@ export function buildCalendarGrid(year, month) {
   return cells
 }
 
-// Returns list of { year, month } from 3 years back to next month, newest first
+// Returns list of { year, month } from 3 years back, newest first, all 12 months per year
 export function getAvailableMonths() {
   const today = new Date()
   const cy = today.getFullYear()
@@ -25,17 +25,14 @@ export function getAvailableMonths() {
 
   const months = []
 
-  // next month
-  let ny = cy, nm = cm + 1
-  if (nm > 12) { nm = 1; ny++ }
-  months.push({ year: ny, month: nm, isFuture: true })
-
-  // current month back to 3 years ago (same month)
   for (let y = cy; y >= cy - 3; y--) {
-    const startM = y === cy - 3 ? cm : 12
-    const endM = y === cy ? cm : 1
-    for (let m = startM; m >= endM; m--) {
-      months.push({ year: y, month: m, isCurrent: y === cy && m === cm })
+    for (let m = 12; m >= 1; m--) {
+      months.push({
+        year: y,
+        month: m,
+        isCurrent: y === cy && m === cm,
+        isFuture: y > cy || (y === cy && m > cm),
+      })
     }
   }
 

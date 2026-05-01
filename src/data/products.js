@@ -1,7 +1,6 @@
 // Product catalog — bonus per unit sold (₪)
 export const PRODUCTS = [
 
-
   { id: 'sofiderm_05',            name: ' סופידרם 0.5CC',                     bonus: 3   },
   { id: 'mazrek_200',             name: 'מזרק סופידרם חצי ב200',             bonus: 10  },
   { id: 'sofiderm',               name: 'סופידרם 1CC',                        bonus: 8   },
@@ -31,27 +30,6 @@ export const PRODUCTS = [
   { id: 'juvederm_3',             name: 'גובידרם 3',                            bonus: 3   },
   { id: 'lips_stylage',           name: "סטילאז LIPS",                          bonus: 3   },
   { id: 'rinstyl',                name: 'רדנסיטי',                              bonus: 6   },
-
-
-
-
-
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ]
 
