@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore'
+import { doc, getDoc, setDoc, collection, getDocs, deleteField } from 'firebase/firestore'
 import { db } from '../firebase'
 import { calcMonthBonus } from './bonusCalc'
 
@@ -10,16 +10,18 @@ function monthRef(userId, year, month) {
   return doc(db, 'users', userId, 'months', monthKey(year, month))
 }
 
-// Returns { "16": { products: {...} }, ... } for the given month
+// Returns { days, manualTotal } for the given month
 export async function getMonthData(userId, year, month) {
   const snap = await getDoc(monthRef(userId, year, month))
-  return snap.exists() ? (snap.data().days || {}) : {}
+  if (!snap.exists()) return { days: {}, manualTotal: null }
+  const data = snap.data()
+  return { days: data.days || {}, manualTotal: data.manualTotal ?? null }
 }
 
 // Returns the saved products for a specific day
 export async function getDayData(userId, year, month, day) {
-  const monthData = await getMonthData(userId, year, month)
-  return monthData[String(day)]?.products || {}
+  const { days } = await getMonthData(userId, year, month)
+  return days[String(day)]?.products || {}
 }
 
 // Saves a day's products and recalculates the month total
@@ -42,7 +44,17 @@ export async function saveDayData(userId, year, month, day, products) {
     days,
     total: calcMonthBonus(days),
     updatedAt: new Date(),
-  })
+  }, { merge: true })
+}
+
+// Save or clear a manual total override for a month
+export async function saveManualTotal(userId, year, month, value) {
+  const ref = monthRef(userId, year, month)
+  if (value === null) {
+    await setDoc(ref, { manualTotal: deleteField() }, { merge: true })
+  } else {
+    await setDoc(ref, { manualTotal: Number(value) }, { merge: true })
+  }
 }
 
 // Returns all months that have data: { "2026-04": { total, daysCount }, ... }
@@ -51,7 +63,7 @@ export async function getAllMonthSummaries(userId) {
   const result = {}
   snap.forEach(d => {
     result[d.id] = {
-      total:     d.data().total || 0,
+      total:     d.data().manualTotal ?? d.data().total ?? 0,
       daysCount: Object.keys(d.data().days || {}).length,
     }
   })

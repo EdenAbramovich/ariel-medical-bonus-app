@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import AppLayout from '../components/AppLayout'
 import DayModal from '../components/DayModal'
 import { buildCalendarGrid, HEBREW_MONTHS, HEBREW_DAYS_SHORT } from '../utils/dateHelpers'
-import { getMonthData, getDayData, saveDayData } from '../utils/storage'
+import { getMonthData, getDayData, saveDayData, saveManualTotal } from '../utils/storage'
 import { calcDayBonus, calcMonthBonus, formatCurrency } from '../utils/bonusCalc'
 import './MonthView.css'
 
@@ -16,16 +16,23 @@ export default function MonthView({ user, onLogout }) {
   const isCurrentMonth = today.getFullYear() === year && today.getMonth() + 1 === month
   const todayDay       = today.getDate()
 
-  const [monthData, setMonthData] = useState({})
-  const [loading, setLoading]     = useState(true)
-  const [saving, setSaving]       = useState(false)
-  const [modalDay, setModalDay]   = useState(null)
-  const [modalInit, setModalInit] = useState({})
+  const [monthData, setMonthData]     = useState({})
+  const [manualTotal, setManualTotal] = useState(null)
+  const [editingTotal, setEditingTotal] = useState(false)
+  const [editValue, setEditValue]     = useState('')
+  const [loading, setLoading]         = useState(true)
+  const [saving, setSaving]           = useState(false)
+  const [modalDay, setModalDay]       = useState(null)
+  const [modalInit, setModalInit]     = useState({})
 
   const loadMonth = useCallback(() => {
     setLoading(true)
     getMonthData(user.sub, year, month)
-      .then(data => { setMonthData(data); setLoading(false) })
+      .then(({ days, manualTotal: mt }) => {
+        setMonthData(days)
+        setManualTotal(mt)
+        setLoading(false)
+      })
       .catch(() => setLoading(false))
   }, [user.sub, year, month])
 
@@ -47,7 +54,28 @@ export default function MonthView({ user, onLogout }) {
     loadMonth()
   }
 
-  const monthTotal = calcMonthBonus(monthData)
+  const monthTotal   = calcMonthBonus(monthData)
+  const displayTotal = manualTotal !== null ? manualTotal : monthTotal
+
+  const startEditTotal = () => {
+    setEditValue(String(manualTotal !== null ? manualTotal : monthTotal))
+    setEditingTotal(true)
+  }
+
+  const handleSaveTotal = async () => {
+    const val = parseFloat(editValue)
+    if (!isNaN(val) && val >= 0) {
+      await saveManualTotal(user.sub, year, month, val)
+      setManualTotal(val)
+    }
+    setEditingTotal(false)
+  }
+
+  const handleClearTotal = async () => {
+    await saveManualTotal(user.sub, year, month, null)
+    setManualTotal(null)
+    setEditingTotal(false)
+  }
   const grid       = buildCalendarGrid(year, month)
   const monthName  = HEBREW_MONTHS[month - 1]
 
@@ -62,8 +90,34 @@ export default function MonthView({ user, onLogout }) {
             {isCurrentMonth && <span className="current-badge">חודש נוכחי</span>}
           </div>
           <div className="month-hero-total">
-            <span className="hero-total-label">סה"כ בונוס חודשי</span>
-            <span className="hero-total-value">{formatCurrency(monthTotal)}</span>
+            <span className="hero-total-label">
+              סה"כ בונוס חודשי
+              {manualTotal !== null && <span className="manual-badge">ידני</span>}
+            </span>
+            {editingTotal ? (
+              <div className="total-edit-row">
+                <span className="total-edit-prefix">₪</span>
+                <input
+                  type="number"
+                  min="0"
+                  className="total-edit-input"
+                  value={editValue}
+                  onChange={e => setEditValue(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') handleSaveTotal(); if (e.key === 'Escape') setEditingTotal(false) }}
+                  autoFocus
+                />
+                <button className="btn-save-total" onClick={handleSaveTotal}>✓</button>
+                <button className="btn-cancel-total" onClick={() => setEditingTotal(false)}>✕</button>
+                {manualTotal !== null && (
+                  <button className="btn-clear-total" onClick={handleClearTotal}>איפוס</button>
+                )}
+              </div>
+            ) : (
+              <div className="total-display-row">
+                <span className="hero-total-value">{formatCurrency(displayTotal)}</span>
+                <button className="btn-edit-total" onClick={startEditTotal} title="ערוך בונוס">✏️</button>
+              </div>
+            )}
           </div>
         </div>
 
