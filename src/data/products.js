@@ -37,7 +37,7 @@ export const PRODUCTS = [
 // entries remain editable.
 export const INACTIVE_PRODUCTS = [
 
-  // { id: 'example_id', name: 'שם המוצר', bonus: 0 },
+  { id: 'exemple',                name: 'דוגמא',                              bonus: 6   },
 
 ]
 
