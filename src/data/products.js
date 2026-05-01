@@ -9,7 +9,6 @@ export const PRODUCTS = [
   { id: 'package_sofiderm_9',     name: 'חבילת 9 סופידרם',                    bonus: 172 },
   { id: 'package_sofiderm_10',    name: 'חבילת 10 סופידרם',                   bonus: 180 },
   { id: 'package_sofiderm_12',    name: 'חבילת 12 סופידרם',                   bonus: 246 },
-  { id: 'package_sofiderm_12',    name: 'חבילת 20 סופידרם',                   bonus: 0 },
   { id: 'package_premium',        name: 'חבילת PREMIUM',                       bonus: 170 },
   { id: 'package_vip',            name: 'חבילת VIP',                           bonus: 270 },
   { id: 'package_gold',           name: 'חבילת gold',                          bonus: 500 },
