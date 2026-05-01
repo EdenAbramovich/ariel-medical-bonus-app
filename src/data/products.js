@@ -23,10 +23,12 @@ export const PRODUCTS = [
   { id: 'package_superderm_9', name: 'חבילת 9 סופרידרם',            bonus: 172 },
   { id: 'package_superderm_10cc', name: 'חבילת 10 סופידרם',     bonus: 180 },
   { id: 'package_superderm_12',name: 'חבילת 12 סופרידרם',           bonus: 246 },
-  { id: 'package_elasti_3',    name: 'חבילת 3 אלסטי',               bonus: 15  },
-  { id: 'package_elasti_6',    name: 'חבילת 6 אלסטי',               bonus: 80  },
-  { id: 'package_elasti_9',    name: 'חבילת 9 אלסטי',               bonus: 145 },
-  { id: 'package_elasti_12',   name: 'חבילת 12 אלסטי',              bonus: 210 },
+  { id: 'hatsi_sibal_focus',   name: 'חצי סיבל פוקוס',             bonus: 3   },
+  { id: 'juvederm_smile_05',   name: 'גובידרם סמייל 0.5',           bonus: 3   },
+  { id: 'juvederm_3',          name: 'גובידרם 3',                   bonus: 3   },
+  { id: 'lips_stylage',        name: "סטילאז LIPS",                bonus: 3   },
+  { id: 'rinstyl',             name: 'רדנסיטי',                     bonus: 6   },
+
 ]
 
 export function unitBonus(product) {
