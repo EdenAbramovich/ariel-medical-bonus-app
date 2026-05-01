@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import AppLayout from '../components/AppLayout'
 import DayModal from '../components/DayModal'
 import { buildCalendarGrid, HEBREW_MONTHS, HEBREW_DAYS_SHORT } from '../utils/dateHelpers'
-import { getMonthData, getDayData, saveDayData, saveManualTotal } from '../utils/storage'
+import { getMonthData, saveDayData, saveManualTotal } from '../utils/storage'
 import { calcDayBonus, calcMonthBonus, formatCurrency } from '../utils/bonusCalc'
 import './MonthView.css'
 
@@ -16,14 +16,17 @@ export default function MonthView({ user, onLogout }) {
   const isCurrentMonth = today.getFullYear() === year && today.getMonth() + 1 === month
   const todayDay       = today.getDate()
 
-  const [monthData, setMonthData]     = useState({})
-  const [manualTotal, setManualTotal] = useState(null)
-  const [editingTotal, setEditingTotal] = useState(false)
-  const [editValue, setEditValue]     = useState('')
-  const [loading, setLoading]         = useState(true)
-  const [saving, setSaving]           = useState(false)
-  const [modalDay, setModalDay]       = useState(null)
-  const [modalInit, setModalInit]     = useState({})
+  const [monthData, setMonthData]         = useState({})
+  const [manualTotal, setManualTotal]     = useState(null)
+  const [editingTotal, setEditingTotal]   = useState(false)
+  const [editValue, setEditValue]         = useState('')
+  const [loading, setLoading]             = useState(true)
+  const [saving, setSaving]               = useState(false)
+  const [modalDay, setModalDay]           = useState(null)
+  const [modalInit, setModalInit]         = useState({})
+  const [modalHasData, setModalHasData]   = useState(false)
+  const [modalSnapshot, setModalSnapshot] = useState(null)
+  const [modalDailyTotal, setModalDailyTotal] = useState(0)
 
   const loadMonth = useCallback(() => {
     setLoading(true)
@@ -38,9 +41,12 @@ export default function MonthView({ user, onLogout }) {
 
   useEffect(() => { loadMonth() }, [loadMonth])
 
-  const openModal = async (day) => {
-    const products = await getDayData(user.sub, year, month, day)
-    setModalInit(products)
+  const openModal = (day) => {
+    const dayData = monthData[String(day)]
+    setModalHasData(!!dayData)
+    setModalSnapshot(dayData?.snapshot || null)
+    setModalDailyTotal(dayData?.dailyTotal ?? 0)
+    setModalInit(dayData?.products || {})
     setModalDay(day)
   }
 
@@ -182,6 +188,9 @@ export default function MonthView({ user, onLogout }) {
           onSave={handleSave}
           onClose={closeModal}
           saving={saving}
+          hasData={modalHasData}
+          snapshot={modalSnapshot}
+          dailyTotal={modalDailyTotal}
         />
       )}
     </AppLayout>

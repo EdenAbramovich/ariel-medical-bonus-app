@@ -11,10 +11,11 @@ export function calcDayBonus(quantities) {
 }
 
 // Calculate total bonus for an entire month
-// monthData: { "1": { products: {...} }, "15": { products: {...} }, ... }
+// Uses stored dailyTotal when available (preserves historical bonuses)
 export function calcMonthBonus(monthData) {
   if (!monthData) return 0
   return Object.values(monthData).reduce((total, dayData) => {
+    if (dayData?.dailyTotal !== undefined) return total + dayData.dailyTotal
     return total + calcDayBonus(dayData?.products)
   }, 0)
 }
