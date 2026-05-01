@@ -84,6 +84,22 @@
   white-space: nowrap;
 }
 
+.header-admin {
+  background: rgba(255, 215, 0, 0.2);
+  border: 1px solid rgba(255, 215, 0, 0.6);
+  color: #ffe066;
+  padding: 5px 14px;
+  border-radius: 8px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.header-admin:hover { background: rgba(255, 215, 0, 0.35); }
+
 .header-logout {
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.45);

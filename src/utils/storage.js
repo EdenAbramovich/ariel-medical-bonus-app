@@ -55,6 +55,44 @@ export async function saveDayData(userId, year, month, day, products) {
   }, { merge: true })
 }
 
+// Upsert user profile so admin can identify users
+export async function saveUserProfile(userId, { email, name, photoURL }) {
+  await setDoc(doc(db, 'users', userId), {
+    email,
+    name,
+    photoURL: photoURL || null,
+    lastSeen: new Date(),
+  }, { merge: true })
+}
+
+// Fetch all users + their bonus for a given month (admin only)
+export async function getAllUsersWithMonthData(year, month) {
+  const key = monthKey(year, month)
+  const usersSnap = await getDocs(collection(db, 'users'))
+
+  const results = await Promise.all(
+    usersSnap.docs
+      .filter(d => d.data().email)
+      .map(async (userDoc) => {
+        const profile   = userDoc.data()
+        const monthSnap = await getDoc(doc(db, 'users', userDoc.id, 'months', key))
+        const md        = monthSnap.exists() ? monthSnap.data() : null
+        return {
+          userId:    userDoc.id,
+          name:      profile.name  || profile.email,
+          email:     profile.email,
+          photoURL:  profile.photoURL || null,
+          lastSeen:  profile.lastSeen || null,
+          bonus:     md ? (md.manualTotal ?? md.total ?? 0) : 0,
+          daysCount: md ? Object.keys(md.days || {}).length : 0,
+          hasData:   !!md,
+        }
+      })
+  )
+
+  return results.sort((a, b) => b.bonus - a.bonus)
+}
+
 // Save or clear a manual total override for a month
 export async function saveManualTotal(userId, year, month, value) {
   const ref = monthRef(userId, year, month)

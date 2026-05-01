@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from './firebase'
+import { saveUserProfile } from './utils/storage'
 import LoginPage from './pages/LoginPage'
 import Dashboard from './pages/Dashboard'
 import MonthView from './pages/MonthView'
+import AdminPage from './pages/AdminPage'
 import './App.css'
 
 function App() {
@@ -14,11 +16,17 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        setUser({
+        const u = {
           sub:     firebaseUser.uid,
           name:    firebaseUser.displayName,
           email:   firebaseUser.email,
           picture: firebaseUser.photoURL,
+        }
+        setUser(u)
+        saveUserProfile(firebaseUser.uid, {
+          email:    firebaseUser.email,
+          name:     firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
         })
       } else {
         setUser(null)
@@ -56,6 +64,10 @@ function App() {
         <Route
           path="/month/:year/:month"
           element={user ? <MonthView {...sharedProps} /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/admin"
+          element={user ? <AdminPage {...sharedProps} /> : <Navigate to="/login" replace />}
         />
         <Route path="*" element={<Navigate to={user ? currentMonthPath : '/login'} replace />} />
       </Routes>

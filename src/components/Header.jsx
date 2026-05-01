@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import './Header.css'
 
+const ADMIN_EMAIL = 'eabramovich1326@gmail.com'
+
 export default function Header({ user, onLogout, backLabel, backTo }) {
   const navigate = useNavigate()
 
@@ -19,6 +21,11 @@ export default function Header({ user, onLogout, backLabel, backTo }) {
       </div>
 
       <div className="header-left">
+        {user.email === ADMIN_EMAIL && (
+          <button className="header-admin" onClick={() => navigate('/admin')}>
+            👑 מנהל
+          </button>
+        )}
         {user.picture && (
           <img src={user.picture} alt={user.name} className="header-avatar" referrerPolicy="no-referrer" />
         )}
