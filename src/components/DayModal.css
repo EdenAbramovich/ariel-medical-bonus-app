@@ -158,6 +158,36 @@
   font-size: 14px;
 }
 
+/* Inactive products section */
+.inactive-section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ccc;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.inactive-section-divider::before,
+.inactive-section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #f0e0e8;
+}
+
+.product-row.inactive-product {
+  opacity: 0.45;
+}
+
+.product-row.inactive-product.has-qty {
+  opacity: 0.75;
+  background: #fdf5f8;
+}
+
 /* Quantity display in view mode */
 .qty-display {
   text-align: center;

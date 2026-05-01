@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { PRODUCTS, unitBonus } from '../data/products'
+import { PRODUCTS, INACTIVE_PRODUCTS, unitBonus } from '../data/products'
 import { calcDayBonus, formatCurrency } from '../utils/bonusCalc'
 import { HEBREW_MONTHS } from '../utils/dateHelpers'
 import './DayModal.css'
@@ -95,8 +95,8 @@ export default function DayModal({ year, month, day, initialProducts, onSave, on
             </div>
             <div className="modal-body">
               {PRODUCTS.map(product => {
-                const rate     = unitBonus(product)
-                const qty      = quantities[product.id] || 0
+                const rate      = unitBonus(product)
+                const qty       = quantities[product.id] || 0
                 const lineTotal = qty * rate
                 return (
                   <div
@@ -123,6 +123,43 @@ export default function DayModal({ year, month, day, initialProducts, onSave, on
                   </div>
                 )
               })}
+
+              {INACTIVE_PRODUCTS.length > 0 && (
+                <>
+                  <div className="inactive-section-divider">
+                    <span>לא פעיל</span>
+                  </div>
+                  {INACTIVE_PRODUCTS.map(product => {
+                    const rate      = unitBonus(product)
+                    const qty       = quantities[product.id] || 0
+                    const lineTotal = qty * rate
+                    return (
+                      <div
+                        key={product.id}
+                        className={`product-row inactive-product ${qty > 0 ? 'has-qty' : ''}`}
+                      >
+                        <div className="product-name-wrap">
+                          <span className="product-name">{product.name}</span>
+                          {rate > 0 && (
+                            <span className="product-rate">{formatCurrency(rate)}/יח'</span>
+                          )}
+                        </div>
+                        <input
+                          type="number"
+                          min="0"
+                          value={qty === 0 ? '' : qty}
+                          placeholder="0"
+                          onChange={e => handleChange(product.id, e.target.value)}
+                          className="qty-input"
+                        />
+                        <span className={`line-total ${lineTotal > 0 ? 'positive' : ''}`}>
+                          {lineTotal > 0 ? formatCurrency(lineTotal) : '—'}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </>
+              )}
             </div>
             <div className="modal-footer">
               <div className="modal-total-row">

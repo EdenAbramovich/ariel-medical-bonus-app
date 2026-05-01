@@ -1,7 +1,7 @@
 import { doc, getDoc, setDoc, collection, getDocs, deleteField } from 'firebase/firestore'
 import { db } from '../firebase'
 import { calcMonthBonus } from './bonusCalc'
-import { PRODUCTS } from '../data/products'
+import { PRODUCTS, INACTIVE_PRODUCTS } from '../data/products'
 
 function monthKey(year, month) {
   return `${year}-${String(month).padStart(2, '0')}`
@@ -38,8 +38,9 @@ export async function saveDayData(userId, year, month, day, products) {
   if (Object.keys(nonZero).length === 0) {
     delete days[String(day)]
   } else {
+    const allProducts = [...PRODUCTS, ...INACTIVE_PRODUCTS]
     const snapshot = Object.entries(nonZero).map(([id, qty]) => {
-      const product = PRODUCTS.find(p => p.id === id)
+      const product = allProducts.find(p => p.id === id)
       const bonus   = product ? product.bonus : 0
       return { id, name: product ? product.name.trim() : id, qty, bonus, lineTotal: qty * bonus }
     })

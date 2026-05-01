@@ -1,4 +1,4 @@
-// Product catalog — bonus per unit sold (₪)
+// ── ACTIVE products — current bonuses ──────────────────────────────────────
 export const PRODUCTS = [
 
   { id: 'sofiderm_05',            name: ' סופידרם 0.5CC',                     bonus: 3   },
@@ -30,6 +30,15 @@ export const PRODUCTS = [
   { id: 'juvederm_3',             name: 'גובידרם 3',                            bonus: 3   },
   { id: 'lips_stylage',           name: "סטילאז LIPS",                          bonus: 3   },
   { id: 'rinstyl',                name: 'רדנסיטי',                              bonus: 6   },
+
+]
+
+// ── INACTIVE products — move items here instead of deleting ────────────────
+// They will appear dimmed at the bottom of the edit form so historical
+// entries remain editable.
+export const INACTIVE_PRODUCTS = [
+
+  // { id: 'example_id', name: 'שם המוצר', bonus: 0 },
 
 ]
 

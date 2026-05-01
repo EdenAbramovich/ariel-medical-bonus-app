@@ -1,10 +1,12 @@
-import { PRODUCTS, unitBonus } from '../data/products'
+import { PRODUCTS, INACTIVE_PRODUCTS, unitBonus } from '../data/products'
+
+const ALL_PRODUCTS = [...PRODUCTS, ...INACTIVE_PRODUCTS]
 
 // Calculate total bonus for one day's quantities
 // quantities: { product_id: count, ... }
 export function calcDayBonus(quantities) {
   if (!quantities) return 0
-  return PRODUCTS.reduce((total, product) => {
+  return ALL_PRODUCTS.reduce((total, product) => {
     const qty = quantities[product.id] || 0
     return total + qty * unitBonus(product)
   }, 0)
